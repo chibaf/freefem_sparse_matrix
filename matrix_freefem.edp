@@ -1,0 +1,39 @@
+//   define borders
+real rad=3.0;
+int n1=64,n2=64;
+border a(t=0,2*pi){x=rad*cos(t);y=rad*sin(t);label=0;};
+border b(t=0,2*pi){x=sin((t*0.5)*cos(t*0.5))+.25;y=cos((t*0.5)*sin(t*0.5))-.25;label=1;};
+
+
+//   define domain and mesh
+mesh Omega=buildmesh(a(n1)+b(n2));
+savemesh(Omega,"test.msh");
+plot(Omega,wait=1,ps="mesh-so.eps");
+
+//generate fem space
+fespace Vh(Omega,P1);
+Vh<complex> uh,vh;
+
+//define problem
+varf mat1(u,v)=
+  int2d(Omega)(dx(u)*dx(v)+dy(u)*dy(v));
+varf mat2(u,v)=
+  int2d(Omega)(u*v);
+
+//solve equation
+//helmholtz;
+
+// define matrix and functions
+matrix<real> ax=mat1(Vh,Vh);
+matrix<real> bx=mat2(Vh,Vh);
+
+//plot solution
+//  write the sparse matrix
+ {
+  ofstream file("test-a.dat");
+  file << ax << endl;
+ }
+ {
+  ofstream file("test-b.dat");
+  file << bx << endl;
+ }
